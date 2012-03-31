@@ -54,4 +54,5 @@ target_link_libraries(SGBuild
 	${OPENGL_LIBRARIES}
 	SSCon
 	graphics
+	math
 )

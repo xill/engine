@@ -1,0 +1,6 @@
+[submodule "src/SSCon"]
+	path = src/SSCon
+	url = git@github.com:xill/SSCon.git
+[submodule "src/math"]
+	path = src/math
+	url = git://github.com/jesseniemisto/math.git
