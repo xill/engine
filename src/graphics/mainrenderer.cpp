@@ -2,16 +2,17 @@
 
 #include "graphics/error.h"
 
-void MainRenderer::onResize(const Vec2f &dimension) {
-	this->dimension = dimension;
+void MainRenderer::onResize(const float dim_w, const float dim_h) {
+	this->dim_w = dim_w;
+	this->dim_h = dim_h;
 
-	glViewport(0, 0, dimension.x, dimension.y);
+	glViewport(0, 0, dim_w, dim_h);
 	glMatrixMode(GL_PROJECTION);
 	glLoadIdentity();
 	
 	glOrtho(
-		0, dimension.x,
-		dimension.y, 0,
+		0, dim_w,
+		dim_h, 0,
 		-1.0f, 1.0f);
 	
 	glMatrixMode(GL_MODELVIEW);
@@ -19,14 +20,15 @@ void MainRenderer::onResize(const Vec2f &dimension) {
 }
 
 void MainRenderer::initWindow(
-	const Vec2f &dimension, int bpp,
+	const float dim_w, const float dim_h, int bpp,
 	bool fullscreen, const std::string &title)
 {
 	if(SDL_Init(SDL_INIT_VIDEO) == 1){
 		throw std::runtime_error("Runtime Error: SDL window init error.");
 	}
 
-	this->dimension = dimension;
+	this->dim_w = dim_w;
+	this->dim_h = dim_h;
 
 	SDL_GL_SetAttribute(SDL_GL_RED_SIZE, 5);
 	SDL_GL_SetAttribute(SDL_GL_GREEN_SIZE, 5);
@@ -40,20 +42,20 @@ void MainRenderer::initWindow(
 	int flags = (SDL_OPENGL | SDL_DOUBLEBUF);
 	flags |= (fullscreen) ? SDL_FULLSCREEN : 0;
 
-	SDL_Surface *screen = SDL_SetVideoMode(dimension.x, dimension.y, bpp, flags);
+	SDL_Surface *screen = SDL_SetVideoMode(dim_w, dim_h, bpp, flags);
 	if (screen == NULL) {
 		throw std::runtime_error("Runtime Error: SDL surface init error.");
 	}
 
 	SDL_Event resizeEvent;
 	resizeEvent.type = SDL_VIDEORESIZE;
-	resizeEvent.resize.w = dimension.x;
-	resizeEvent.resize.h = dimension.y;
+	resizeEvent.resize.w = dim_w;
+	resizeEvent.resize.h = dim_h;
 	SDL_PushEvent(&resizeEvent);
 }
 	
 void MainRenderer::initGraphics() {
-	if (!dimension.x || !dimension.y) {
+	if (!dim_w || !dim_h) {
 		throw std::runtime_error("Runtime Error: Window not initialized.");
 	}
 
@@ -85,23 +87,4 @@ void MainRenderer::drawFrame() {
 
 void MainRenderer::commitDraw() {
 		SDL_GL_SwapBuffers();
-}
-
-Vec3f MainRenderer::unProject(const Vec2f &cursor)
-{
-	GLint viewport[4];
-	GLdouble modelview[16];
-	GLdouble projection[16];
-	GLdouble x, y, z;
-
-	glGetDoublev(GL_MODELVIEW_MATRIX, modelview);
-	glGetDoublev(GL_PROJECTION_MATRIX, projection);
-	glGetIntegerv(GL_VIEWPORT, viewport);
-
-	gluUnProject(
-		cursor.x, cursor.y, 1.0f,
-		modelview, projection, viewport,
-		&x, &y, &z);
-
-	return Vec3f(x, y, z);
 }

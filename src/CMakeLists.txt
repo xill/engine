@@ -35,6 +35,8 @@ include_directories(
 
 add_subdirectory(graphics)
 add_subdirectory(SSCon)
+add_subdirectory(framework)
+add_subdirectory(math)
 
 set(GENERAL_Headers
 	controller.h
@@ -46,13 +48,14 @@ set(GENERAL_Sources
 	main.cpp
 )
 
-add_executable(SGBuild ${GENERAL_Sources})
+add_executable(engine_project ${GENERAL_Sources})
 
-target_link_libraries(SGBuild
+target_link_libraries(engine_project
 	${SDL_LIBRARY}
 	${SDLIMAGE_LIBRARY}
 	${OPENGL_LIBRARIES}
 	SSCon
 	graphics
+	framework
 	math
 )
