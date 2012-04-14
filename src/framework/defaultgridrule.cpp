@@ -44,14 +44,4 @@ void DefaultGridRule::deListId(const int objectid)
 			break;
 		}
 	}
-	/*
-	for(int i=blacklist.size()-1;i>=0;--i)
-	{
-		if(blacklist[i]==objectid)
-		{
-			blacklist.delete(i);
-			break;
-		}
-	}
-	*/
 }

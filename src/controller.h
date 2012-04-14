@@ -1,14 +1,16 @@
 #ifndef CONTROLLER_H
 #define CONTROLLER_H
 
-#include <string>
-#include <list>
-#include <SSCon/text_include.h>
-
-#include "graphics/mainrenderer.h"
-#include "graphics/texturemanager.h"
 #include "SSCon/terminallistener.h"
-#include "SSCon/terminal.h"
+
+#include "math/vec2.hpp"
+#include "framework/gridobject.h"
+
+#include <string>
+
+class Renderer;
+class Camera;
+class Terminal;
 
 union SDL_Event;
 struct Object;
@@ -22,19 +24,32 @@ protected:
 	static Controller *instance_;
 	/** singleton */
 	Controller();
+	~Controller();
 
-	MainRenderer renderer;
-	Terminal terminal;
+	Renderer* renderer;
+	Terminal* terminal;
+	Camera *m_camera;
+
+	GridObject* player;
 
 	bool running;
 
-	World* world;
-	GridObject* player;
+	// mouse events
+	bool m_mouseLeft, m_mouseRight;
+	Vec2i m_mousemotion;
+	float m_zoomFactor;
+
+	void onEvent(const SDL_Event &event);
+
+	void onMouseButtonDown(const Vec2i &cursor);
+	void onMouseMotion(const Vec2i &motion);
+
+	void onResize(const Vec2i &dimension);
 
 public:
 
 	static Controller *instance();
-	void onEvent(const SDL_Event &event);
+	
 	std::string onCommit(std::string);
 	void run();
 

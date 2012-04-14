@@ -5,6 +5,7 @@
 #include <algorithm>
 #include "framework/gridrule.h"
 #include "framework/defaultgridrule.h"
+#include "framework/blockinggridrule.hpp"
 #include "framework/gridobject.h"
 #include "framework/griddata.hpp"
 
@@ -34,6 +35,10 @@ public:
 	void addGridObject(GridObject*);
 
 	std::vector<GridObject*> getGridObjects();
+
+	GridData*** getGrid();
+
+	std::vector<GridRule*> getRuleSet();
 
 	int getGridHeight();
 

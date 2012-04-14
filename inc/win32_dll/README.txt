@@ -1,0 +1,1 @@
+Copy these file into the same directory that contains the binary

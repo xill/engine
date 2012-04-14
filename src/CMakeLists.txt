@@ -1,41 +1,34 @@
-include_directories(..)
 include_directories(.)
-
-# http://www.vtk.org/Wiki/CMake_FAQ#How_can_I_build_my_MSVC_application_with_a_static_runtime.3F
-if (WIN32)
-	option(STATIC_RUNTIME "Build static runtime, no need for MSVC libraries" OFF)
-
-	if (STATIC_RUNTIME)
-		set(CMAKE_USER_MAKE_RULES_OVERRIDE
-		    ${CMAKE_CURRENT_SOURCE_DIR}/CMake/c_flag_overrides.cmake)
-		set(CMAKE_USER_MAKE_RULES_OVERRIDE_CXX
-		    ${CMAKE_CURRENT_SOURCE_DIR}/CMake/cxx_flag_overrides.cmake)
-	endif(STATIC_RUNTIME)
-endif(WIN32)
 
 # Find SDL, SDL_image and OpenGL
 if (WIN32)
-	set(SDL_INCLUDE_DIR ../SDL/include)
-	set(SDLIMAGE_INCLUDE_DIR ../SDL/include)
-	set(SDL_LIBRARY ${PROJECT_SOURCE_DIR}/SDL/lib/SDL.lib)
-	set(SDLMAIN_LIBRARY ${PROJECT_SOURCE_DIR}/SDL/lib/SDLmain.lib)
-	set(SDLIMAGE_LIBRARY ${PROJECT_SOURCE_DIR}/SDL/lib/SDL_image.lib)
+	set(SDL_INCLUDE_DIR ../inc/SDL/include)
+	set(SDLIMAGE_INCLUDE_DIR ../inc/SDL/include)
+	set(SDL_LIBRARY ${PROJECT_SOURCE_DIR}/inc/SDL/lib/SDL.lib)
+	set(SDLMAIN_LIBRARY ${PROJECT_SOURCE_DIR}/inc/SDL/lib/SDLmain.lib)
+	set(SDLIMAGE_LIBRARY ${PROJECT_SOURCE_DIR}/inc/SDL/lib/SDL_image.lib)
 	set(SDL_LIBRARY ${SDL_LIBRARY} ${SDLMAIN_LIBRARY})
+
+	set(GLEW_INCLUDE_DIR ../inc/GLEW/include)
+	set(GLEW_LIBRARY ${PROJECT_SOURCE_DIR}/inc/GLEW/lib/glew32.lib)
 else (WIN32)
-	find_package(SDL)
-	find_package(SDL_image)
+	find_package(SDL REQUIRED)
+	find_package(SDL_image REQUIRED)
+	find_package(GLEW REQUIRED)
+
+	if (GLEW_FOUND EQUAL 0)
+		message(FATAL_ERROR "please: install glew")
+	endif (GLEW_FOUND EQUAL 0)
 endif (WIN32)
 
 find_package(OpenGL REQUIRED)
 
-include_directories(
-	${SDL_INCLUDE_DIR}
-	${SDLIMAGE_INCLUDE_DIR}
-)
+include_directories(${SDL_INCLUDE_DIR} ${SDLIMAGE_INCLUDE_DIR} ${GLEW_INCLUDE_DIR})
 
 add_subdirectory(graphics)
 add_subdirectory(SSCon)
 add_subdirectory(framework)
+add_subdirectory(camera)
 add_subdirectory(math)
 
 set(GENERAL_Headers
@@ -51,11 +44,13 @@ set(GENERAL_Sources
 add_executable(engine_project ${GENERAL_Sources})
 
 target_link_libraries(engine_project
+	${OPENGL_LIBRARIES}
 	${SDL_LIBRARY}
 	${SDLIMAGE_LIBRARY}
-	${OPENGL_LIBRARIES}
+	${GLEW_LIBRARY}
 	SSCon
 	graphics
 	framework
+	camera
 	math
 )

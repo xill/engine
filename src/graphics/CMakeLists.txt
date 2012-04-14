@@ -1,12 +1,12 @@
 set(GRAPHICS_Headers
-	mainrenderer.h
+	renderer.hpp
 	texturemanager.h
 	include.h
 )
 
 set(GRAPHICS_Sources
 	${GRAPHICS_Headers}
-	mainrenderer.cpp
+	renderer.cpp
 	texturemanager.cpp
 )
 

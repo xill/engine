@@ -6,9 +6,10 @@
 #	include <windows.h>
 #endif
 
+#define GL_GLEXT_PROTOTYPES 1 // get OpenGL extensions prototypes.
+
 #include <SDL/SDL.h>
-#include <SDL/SDL_image.h>
-#include <SDL/SDL_opengl.h>
+#include <GL/glew.h>
 #include <GL/gl.h>
 #include <GL/glu.h>
 
@@ -19,5 +20,7 @@
 #define GL_TABLE_TOO_LARGE 0x8031
 #endif
 #endif
+
+#include "graphics/error.h"
 
 #endif // GRAPHICS_INCLUDE_H
