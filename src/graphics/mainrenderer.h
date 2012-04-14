@@ -4,6 +4,9 @@
 #include <string>
 #include <list>
 #include <stdexcept>
+#include <vector>
+#include "framework/world.h"
+#include "framework/gridobject.h"
 
 class MainRenderer
 {
@@ -26,6 +29,9 @@ public:
 	void initGraphics();
 
 	void startDraw();
+
+	void drawWorld(World* world);
+
 	void drawFrame();
 	void commitDraw();
 

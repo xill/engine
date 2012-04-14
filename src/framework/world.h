@@ -35,6 +35,10 @@ public:
 
 	std::vector<GridObject*> getGridObjects();
 
+	int getGridHeight();
+
+	int getGridWidth();
+
 	int xToColumn(float x);
 
 	float columnToX(int x);

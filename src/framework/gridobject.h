@@ -29,6 +29,8 @@ public:
 	void setType(OBJTYPE type) { this->type = type; }
 	void setId(int id) { this->id = id; }
 	void setDesiredGridOffset(int x = 0, int y = 0) { this->x_off = x; this->y_off = y; }
+	void setXOffset(int x) { this->x_off = x; }
+	void setYOffset(int y) { this->y_off = y; }
 
 	float getX() { return x; }
 	float getY() { return y; }

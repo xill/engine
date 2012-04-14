@@ -25,10 +25,11 @@ void World::onStep(float delta)
 
 			if(!data->isEmpty())
 			{
-				for(std::vector<GridObject*>::iterator it = data->objects.begin(); it != data->objects.end(); ++it)
+				for(int i = 0 ; i < objects.size() ; ++i)
 				{
-					int x = (*it)->getXOffset();
-					int y = (*it)->getYOffset();
+					GridObject* obj = objects[i];
+					int x = obj->getXOffset();
+					int y = obj->getYOffset();
 
 					// if no movement. no need to update.
 					if(x == 0 && y == 0) continue;
@@ -49,9 +50,9 @@ void World::onStep(float delta)
 
 					if(rule->ignoreAll()) continue;
 
-					if(rule->isBlackListed((*it)->getId())) continue;
+					if(rule->isBlackListed(obj->getId())) continue;
 
-					switch((*it)->getType())
+					switch(obj->getType())
 					{
 					case PROJECTILE:
 						if(!rule->allowProjectile())
@@ -67,11 +68,19 @@ void World::onStep(float delta)
 						break;
 					};
 
-					(*it)->setGridX(resCol);
-					(*it)->setGridY(resRow);
+					obj->setGridX(resCol);
+					obj->setGridY(resRow);
 
-					data->delObj((*it));
-					destGrid->addObj((*it));
+					data->delObj(obj);
+					destGrid->addObj(obj);
+
+					// debug stuff
+					obj->setX(columnToX(obj->getGridX()));
+					obj->setY(rowToY(obj->getGridY()));
+					// debug stuff end.
+
+					// resets the movement.
+					obj->setDesiredGridOffset();
 				}
 			}
 		}
@@ -87,11 +96,24 @@ void World::addGridObject(GridObject* obj)
 {
 	objects.push_back(obj);
 	grid[obj->getGridY()][obj->getGridX()]->addObj(obj);
+
+	obj->setX(columnToX(obj->getGridX()));
+	obj->setY(rowToY(obj->getGridY()));
 }
 
 std::vector<GridObject*> World::getGridObjects()
 {
 	return objects;
+}
+
+int World::getGridHeight()
+{
+	return ROWS;
+}
+
+int World::getGridWidth()
+{
+	return COLUMNS;
 }
 
 int World::xToColumn(float x)

@@ -72,6 +72,61 @@ void MainRenderer::startDraw() {
 	glLoadIdentity();
 }
 
+void MainRenderer::drawWorld(World* world)
+{
+	std::vector<GridObject*> objects = world->getGridObjects();
+	int h = world->getGridHeight();
+	int w = world->getGridWidth();
+	int sizex = 20;
+	int sizey = 20;
+
+	// debug draw movement grid.
+
+	glPushMatrix();
+//	glTranslatef(sizex * w * 0.5,sizey * h * 0.5,0);
+	for(int y = 0 ; y < h ; ++y )
+	{
+		glPushMatrix();
+		for(int x = 0 ; x < w ; ++x )
+		{
+			int c = (y+x)%2;
+
+			if(c == 0) glColor4f(.5,0,0,.5);
+			else glColor4f(0,.5,0,.5);
+
+			glBegin(GL_QUADS);
+			glVertex2f(0,0);
+			glVertex2f(sizex,0);
+			glVertex2f(sizex,sizey);
+			glVertex2f(0,sizey);
+			glEnd();
+
+			glTranslatef(sizex,0,0);
+		}
+		glPopMatrix();
+		glTranslatef(0,sizey,0);
+	}
+	glPopMatrix();
+
+	glColor4f(0,0,1,1);
+	for(std::vector<GridObject*>::iterator it = objects.begin(); it != objects.end(); ++it)
+	{
+		glPushMatrix();
+		glTranslatef((*it)->getX(),(*it)->getY(),0);
+
+		int size = 5;
+
+		glBegin(GL_QUADS);
+		glVertex2f(-size,-size);
+		glVertex2f(size,-size);
+		glVertex2f(size,size);
+		glVertex2f(-size,size);
+		glEnd();
+
+		glPopMatrix();
+	}
+}
+
 void MainRenderer::drawFrame() {
 	/*
 	glColor3f(0,1,0);

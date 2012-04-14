@@ -1,6 +1,8 @@
 #include "controller.h"
 
 #include "SSCon/textfactory.h"
+#include "framework/world.h"
+#include "framework/gridobject.h"
 #include <iostream>
 
 Controller *Controller::instance_ = NULL;
@@ -30,6 +32,13 @@ void Controller::run()
 	terminal.setDimension(720,560);
 	terminal.setBackgroundRGBA(0,0,0,1);
 
+	world = new World(20,20);
+	player = new GridObject();
+	player->setGridX(2);
+	player->setGridY(2);
+
+	world->addGridObject(player);
+
 	while (running) {
 
 		unsigned int duration = SDL_GetTicks() - last_step;
@@ -45,10 +54,13 @@ void Controller::run()
 			while (SDL_PollEvent(&event)) {
 				onEvent(event);
 			}
+
+			world->onStep(duration/16.0f);
 		}
 		last_step = SDL_GetTicks();
 
 		renderer.startDraw();
+		renderer.drawWorld(world);
 		renderer.drawFrame();
 		terminal.draw();
 		renderer.commitDraw();
@@ -75,6 +87,18 @@ void Controller::onEvent(const SDL_Event &event)
 		break;
 	case SDL_KEYUP:
 		switch (event.key.keysym.sym) {
+		case SDLK_UP:
+			player->setYOffset(-1);
+			break;
+		case SDLK_DOWN:
+			player->setYOffset(1);
+			break;
+		case SDLK_LEFT:
+			player->setXOffset(-1);
+			break;
+		case SDLK_RIGHT:
+			player->setXOffset(1);
+			break;
 		case SDLK_HOME:
 			terminal.open();
 		};

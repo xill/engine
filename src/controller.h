@@ -28,6 +28,9 @@ protected:
 
 	bool running;
 
+	World* world;
+	GridObject* player;
+
 public:
 
 	static Controller *instance();

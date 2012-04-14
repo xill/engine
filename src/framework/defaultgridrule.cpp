@@ -36,6 +36,15 @@ void DefaultGridRule::blackListId(const int objectid)
 
 void DefaultGridRule::deListId(const int objectid)
 {
+	for(std::vector<int>::iterator it = blacklist.begin(); it != blacklist.end(); ++it)
+	{
+		if((*it)==objectid)
+		{
+			blacklist.erase(it);
+			break;
+		}
+	}
+	/*
 	for(int i=blacklist.size()-1;i>=0;--i)
 	{
 		if(blacklist[i]==objectid)
@@ -44,4 +53,5 @@ void DefaultGridRule::deListId(const int objectid)
 			break;
 		}
 	}
+	*/
 }
