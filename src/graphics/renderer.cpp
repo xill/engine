@@ -142,6 +142,8 @@ void Renderer::drawFrame(const Camera &camera)
 void Renderer::drawWorld(World* world)
 {
 	std::vector<GridObject*> objects = world->getGridObjects();
+	std::vector<GridRule*> rules = world->getRuleSet();
+	GridData*** grid = world->getGrid();
 	int h = world->getGridHeight();
 	int w = world->getGridWidth();
 	int sizex = 20;
@@ -150,25 +152,30 @@ void Renderer::drawWorld(World* world)
 	// debug draw movement grid.
 
 	glPushMatrix();
-//	glScalef(100,100,100);
-	glTranslatef(sizex * w * 0.5,sizey * h * 0.5,0);
-	glPushMatrix();
 	for(int y = 0 ; y < h ; ++y )
 	{
 		glPushMatrix();
 		for(int x = 0 ; x < w ; ++x )
 		{
-			int c = (y+x)%2;
+			if(!rules[grid[y][x]->ruleid]->ignoreAll())
+			{
+				int c = (y+x)%2;
 
-			if(c == 0) glColor4f(.5,0,0,.5);
-			else glColor4f(0,.5,0,.5);
+				if(c == 0) glColor4f(.5,0,0,.5);
+				else glColor4f(0,.5,0,.5);
 
-			glBegin(GL_QUADS);
-			glVertex2f(0,0);
-			glVertex2f(sizex,0);
-			glVertex2f(sizex,sizey);
-			glVertex2f(0,sizey);
-			glEnd();
+				glPushMatrix();
+				glTranslatef(0,0,grid[y][x]->elevation);
+
+				glBegin(GL_QUADS);
+				glVertex2f(0,0);
+				glVertex2f(sizex,0);
+				glVertex2f(sizex,sizey);
+				glVertex2f(0,sizey);
+				glEnd();
+
+				glPopMatrix();
+			}
 
 			glTranslatef(sizex,0,0);
 		}
@@ -181,7 +188,7 @@ void Renderer::drawWorld(World* world)
 	for(std::vector<GridObject*>::iterator it = objects.begin(); it != objects.end(); ++it)
 	{
 		glPushMatrix();
-		glTranslatef((*it)->getX(),(*it)->getY(),0);
+		glTranslatef((*it)->getX(),(*it)->getY(),(*it)->getZ() - 1);
 
 		int size = 5;
 
@@ -194,5 +201,4 @@ void Renderer::drawWorld(World* world)
 
 		glPopMatrix();
 	}
-	glPopMatrix();
 }

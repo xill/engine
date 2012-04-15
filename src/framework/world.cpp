@@ -4,6 +4,8 @@ World::World(int rows,int columns) : ROWS(rows) , COLUMNS(columns)
 {
 	// should the grid be constructed from a outside source.
 	grid = new GridData **[ROWS] ;
+	float elevation = 0;
+	float deelevecation = 0;
 	for( int i = 0 ; i < ROWS ; ++i )
 	{
 		grid[i] = new GridData*[COLUMNS];
@@ -12,6 +14,20 @@ World::World(int rows,int columns) : ROWS(rows) , COLUMNS(columns)
 			if(columns > 7 && f == 7 && i != rows-1)
 			{
 				grid[i][f] = new GridData(1);
+			}
+			else if(f == 0)
+			{
+				// ladder up.
+				grid[i][f] = new GridData(0);
+				grid[i][f]->elevation = elevation;
+				elevation -= 3;
+			}
+			else if(f == columns - 1)
+			{
+				// ladder down.
+				grid[i][f] = new GridData(0);
+				grid[i][f]->elevation = deelevecation;
+				deelevecation += 3;
 			}
 			else {
 				grid[i][f] = new GridData(0);
@@ -33,9 +49,13 @@ void World::onStep(float delta)
 
 			if(!data->isEmpty())
 			{
-				for(int i = 0 ; i < objects.size() ; ++i)
+				for(int i = 0 ; i < data->objects.size() ; ++i)
 				{
-					GridObject* obj = objects[i];
+					GridObject* obj = data->objects[i];
+
+					if(obj->tweenTo(columnToX(col),rowToY(row),data->elevation,delta)) continue;
+
+					//GridObject* obj = objects[i];
 					int x = obj->getXOffset();
 					int y = obj->getYOffset();
 
@@ -44,9 +64,6 @@ void World::onStep(float delta)
 					
 					int resRow = row + y;
 					int resCol = col + x;
-
-					// resets the movement.
-					obj->setDesiredGridOffset();
 					
 					if(resRow < 0) resRow = 0;
 					else if(resRow >= ROWS) resRow = ROWS - 1;
@@ -55,6 +72,23 @@ void World::onStep(float delta)
 					else if(resCol >= COLUMNS) resCol = COLUMNS - 1;
 
 					GridData* destGrid = grid[resRow][resCol];
+
+					// check if the objects in the grid wish to share it.
+					bool share = true;
+
+					if(!destGrid->isEmpty())
+					{
+						for(std::vector<GridObject*>::iterator it = destGrid->objects.begin() ; it != destGrid->objects.end() ; ++it )
+						{
+							if(!(*it)->canShareGrid())
+							{
+								share = false;
+								break;
+							}
+						}
+					}
+
+					if(!share) continue;
 
 					// checks if rules deem movement possible.
 					GridRule* rule = rules[destGrid->ruleid];
@@ -84,11 +118,6 @@ void World::onStep(float delta)
 
 					data->delObj(obj);
 					destGrid->addObj(obj);
-
-					// debug stuff
-					obj->setX(columnToX(obj->getGridX()));
-					obj->setY(rowToY(obj->getGridY()));
-					// debug stuff end.
 				}
 			}
 		}

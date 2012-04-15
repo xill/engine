@@ -50,6 +50,10 @@ Controller *Controller::instance()
 
 void Controller::run()
 {
+	/*
+	 NOTE : positive x is right . positive y is up. positive z is down. 
+	*/
+
 	unsigned int last_step = 0;
 	float dt = 0;
 	renderer->initWindow(Vec2i(720,560),32,0,title_);
@@ -62,12 +66,20 @@ void Controller::run()
 	player->setGridX(2);
 	player->setGridY(2);
 
-//	m_camera = new LookAt(player , Vec3f(10,0,0), Vec3f(0,1,0));
-	m_camera = new LookAt(Vec3f(0,0,50),Vec3f(0,0,0), Vec3f(0,1,0));
+	GridObject* obj = new GridObject();
+	obj->setGridX(4);
+	obj->setGridY(5);
 
 	World* world = new World(20,20);
-
 	world->addGridObject(player);
+	world->addGridObject(new GridObject());
+	world->addGridObject(obj);
+
+		// camera following the player
+	m_camera = new LookAt(player , Vec3f(0,0,-50), Vec3f(0,-1,0));
+
+	// camera centered to single point.
+//	m_camera = new LookAt(Vec3f(0,0,50),Vec3f(0,0,0), Vec3f(0,1,0));
 
 	while (running) {
 
@@ -101,8 +113,9 @@ void Controller::run()
 
 		if (m_zoomFactor != 1.0f) {
 			m_camera->onCameraZoom(m_zoomFactor);
-			m_camera->updateModelViewMatrix();
 		}
+
+		m_camera->updateModelViewMatrix();
 
 		renderer->drawFrame(*m_camera);
 		glColor4f(0.0, 1.0f, 1.0f, 1.0f);
@@ -147,16 +160,6 @@ void Controller::onEvent(const SDL_Event &event)
 	case SDL_KEYDOWN:
 		switch (event.key.keysym.sym) {
 
-		case SDLK_ESCAPE:
-			running = false;
-			break;
-		default:
-			break;
-		};
-		break;
-	case SDL_KEYUP:
-		switch (event.key.keysym.sym) {
-
 		case SDLK_UP:
 			player->setYOffset(-1);
 			break;
@@ -168,6 +171,29 @@ void Controller::onEvent(const SDL_Event &event)
 			break;
 		case SDLK_RIGHT:
 			player->setXOffset(1);
+			break;
+
+		case SDLK_ESCAPE:
+			running = false;
+			break;
+		default:
+			break;
+		};
+		break;
+	case SDL_KEYUP:
+		switch (event.key.keysym.sym) {
+
+		case SDLK_UP:
+			player->setYOffset(0);
+			break;
+		case SDLK_DOWN:
+			player->setYOffset(0);
+			break;
+		case SDLK_LEFT:
+			player->setXOffset(0);
+			break;
+		case SDLK_RIGHT:
+			player->setXOffset(0);
 			break;
 		case SDLK_HOME:
 			terminal->open();
