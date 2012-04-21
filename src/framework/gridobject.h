@@ -10,6 +10,12 @@ enum OBJTYPE
 	OBJECT = 1
 };
 
+enum ZMOVTYPE
+{
+	SNAP = 0,
+	AUTO = 1
+};
+
 
 class GridObject : public FollowPoint
 {
@@ -29,11 +35,17 @@ private:
 	// type of the object.
 	OBJTYPE type;
 
+	// z axis movement type.
+	ZMOVTYPE zmovtype;
+
 	// if this object allows sharing of it's grid.
 	bool sharesGrid;
 
 	// speed this object transitions between grids. value 0 will make the movement directly snap to location.
 	float gridMovSpeed;
+
+	// speed this object transitions between Z axis. 
+	float zMovSpeed;
 
 	// currently unused.
 	int gridrange;
@@ -48,8 +60,10 @@ public:
 	, x_off(0)
 	, y_off(0)
 	, gridMovSpeed(0.7f)
+	, zMovSpeed(0.5f)
 	, gridrange(3)
 	, type(t)
+	, zmovtype(AUTO)
 	, id(-1)
 	, sharesGrid(false)
 	{}
@@ -61,12 +75,14 @@ public:
 	void setGridY(int y) { this->gridy = y; }
 	void setGridRange(int range) { this->gridrange = range; } // needed?
 	void setType(OBJTYPE type) { this->type = type; }
+	void setZType(ZMOVTYPE type) { this->zmovtype = type; }
 	void setId(int id) { this->id = id; }
 	void setDesiredGridOffset(int x = 0, int y = 0) { this->x_off = x; this->y_off = y; }
 	void setXOffset(int x) { this->x_off = x; }
 	void setYOffset(int y) { this->y_off = y; }
 	void setSharesGrid(bool status) { this->sharesGrid = status; }
 	void setGridMovementSpeed(float speed) { this->gridMovSpeed = speed; }
+	void setZMovementSpeed(float speed) { this->zMovSpeed = speed; }
 
 	float getX() { return x; }
 	float getY() { return y; }
@@ -77,9 +93,11 @@ public:
 	int getYOffset() { return y_off; }
 	int getGridRange() { return gridrange; }
 	OBJTYPE getType() { return type; }
+	ZMOVTYPE getZType() { return zmovtype; }
 	int getId() { return id; }
 	bool canShareGrid() { return sharesGrid; }
 	float getGridMovementSpeed() { return gridMovSpeed; }
+	float getZMovementSpeed() { return zMovSpeed; }
 	
 	// returns true if tweening was performed. false if not.
 	bool tweenTo(float target_x, float target_y, float target_z, float delta);

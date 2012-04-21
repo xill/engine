@@ -2,13 +2,12 @@
 
 bool GridObject::tweenTo(float target_x, float target_y, float target_z, float delta)
 {
-	if(target_x == x && target_y == y && target_z == z) return false;
+	if(target_x == x && target_y == y) return false;
 
 	if(gridMovSpeed == 0)
 	{
 		this->x = target_x;
 		this->y = target_y;
-		this->z = target_z;
 	}
 	else if(delta != 0)
 	{
@@ -21,6 +20,7 @@ bool GridObject::tweenTo(float target_x, float target_y, float target_z, float d
 
 		float tmpx = this->x + normal.x * gridMovSpeed * delta;
 		float tmpy = this->y + normal.y * gridMovSpeed * delta;
+		float tmpz = this->z + zMovSpeed * delta;
 
 		if((normal.x < 0 && tmpx < target_x) 
 			|| (normal.x > 0 && tmpx > target_x))
@@ -34,9 +34,15 @@ bool GridObject::tweenTo(float target_x, float target_y, float target_z, float d
 			tmpy = target_y;
 		}
 
+		if((zMovSpeed < 0 && tmpz < target_z) 
+			|| (zMovSpeed > 0 && tmpz > target_z))
+		{
+			tmpz = target_z;
+		}
+
 		this->x = tmpx;
 		this->y = tmpy;
-		this->z = target_z;
+		this->z = tmpz;
 	}
 	return true;
 }

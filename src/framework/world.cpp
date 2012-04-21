@@ -53,9 +53,16 @@ void World::onStep(float delta)
 				{
 					GridObject* obj = data->objects[i];
 
-					if(obj->tweenTo(columnToX(col),rowToY(row),data->elevation,delta)) continue;
+					float t_x = columnToX(col)
+						,t_y = rowToY(row);
 
-					//GridObject* obj = objects[i];
+					if(obj->tweenTo(t_x,t_y,data->elevation,delta))
+					{
+						continue; 
+					}
+
+					obj->setZ(data->elevation);
+
 					int x = obj->getXOffset();
 					int y = obj->getYOffset();
 
@@ -115,6 +122,35 @@ void World::onStep(float delta)
 
 					obj->setGridX(resCol);
 					obj->setGridY(resRow);
+
+					switch(obj->getZType())
+					{
+					case AUTO:
+						{
+							float diff = destGrid->elevation - data->elevation;
+							if(diff != 0)
+							{
+								float timesToReach = 0;
+								float c = 0;
+								if(x != 0) { timesToReach += X_TO_PX_RATIO; c++; }
+								if(y != 0) { timesToReach += Y_TO_PX_RATIO; c++; }
+
+								if(c > 1)
+								{
+									timesToReach /= c;
+								}
+
+								timesToReach /= obj->getGridMovementSpeed();
+								obj->setZMovementSpeed(diff/timesToReach);
+							}
+						}
+						break;
+					case SNAP:
+						obj->setZ(destGrid->elevation);
+						break;
+					default:
+						break;
+					}
 
 					data->delObj(obj);
 					destGrid->addObj(obj);
