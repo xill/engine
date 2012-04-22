@@ -47,6 +47,9 @@ private:
 	// speed this object transitions between Z axis. 
 	float zMovSpeed;
 
+	// maximum difference allowed for z axis movement elevation.
+	float maxZDifference;
+
 	// currently unused.
 	int gridrange;
 
@@ -65,6 +68,7 @@ public:
 	, type(t)
 	, zmovtype(AUTO)
 	, id(-1)
+	, maxZDifference(8)
 	, sharesGrid(false)
 	{}
 
@@ -83,6 +87,7 @@ public:
 	void setSharesGrid(bool status) { this->sharesGrid = status; }
 	void setGridMovementSpeed(float speed) { this->gridMovSpeed = speed; }
 	void setZMovementSpeed(float speed) { this->zMovSpeed = speed; }
+	void setZMaxDiff(float diff) { this->maxZDifference = diff; }
 
 	float getX() { return x; }
 	float getY() { return y; }
@@ -98,6 +103,7 @@ public:
 	bool canShareGrid() { return sharesGrid; }
 	float getGridMovementSpeed() { return gridMovSpeed; }
 	float getZMovementSpeed() { return zMovSpeed; }
+	float getZMaxDiff() { return maxZDifference; }
 	
 	// returns true if tweening was performed. false if not.
 	bool tweenTo(float target_x, float target_y, float target_z, float delta);

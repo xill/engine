@@ -120,6 +120,10 @@ void World::onStep(float delta)
 						break;
 					};
 
+					float diff = destGrid->elevation - data->elevation;
+
+					if(diff != 0 && ((diff < 0)?diff*-1:diff) > obj->getZMaxDiff()) continue;
+
 					obj->setGridX(resCol);
 					obj->setGridY(resRow);
 
@@ -127,7 +131,6 @@ void World::onStep(float delta)
 					{
 					case AUTO:
 						{
-							float diff = destGrid->elevation - data->elevation;
 							if(diff != 0)
 							{
 								float timesToReach = 0;
